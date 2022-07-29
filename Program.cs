@@ -1,9 +1,17 @@
+using HotelListing_API.Data;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.Configuration;
+
+
 
 var builder =WebApplication.CreateBuilder(args);
 
 
+
 // Add services to the container.
+builder.Services.AddDbContext<DatabaseContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -14,8 +22,9 @@ builder.Services.AddCors(x =>
     x.AddPolicy("MyCorPolicy", builder=> builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
 
+//register serilog logger to the services---hand written
 builder.Host.UseSerilog((ctx, lc) => lc
-    .WriteTo.Console());
+    .WriteTo.Console().WriteTo.Seq("http://localhost:5341/"));
 
 var app = builder.Build();
 
