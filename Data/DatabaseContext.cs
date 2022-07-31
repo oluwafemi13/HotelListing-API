@@ -11,6 +11,10 @@ namespace HotelListing_API.Data
 
         }
 
+        public DbSet<Country> Countries { get; set; }
+
+        public DbSet<Hotel> Hotels { get; set; }
+
         //overridden method for seeding data into the database
         public virtual void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -64,8 +68,6 @@ namespace HotelListing_API.Data
 
         }
 
-        public DbSet<Country> Countries { get; set; }
-
-        public DbSet<Hotel> Hotels { get; set; }
+       
     }
 }
