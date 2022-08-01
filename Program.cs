@@ -1,4 +1,5 @@
 using HotelListing_API.Data;
+using HotelListing_API.Mappings;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System.Configuration;
@@ -21,6 +22,9 @@ builder.Services.AddCors(x =>
 {
     x.AddPolicy("MyCorPolicy", builder=> builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
+
+//register the automapper in the services
+builder.Services.AddAutoMapper(typeof(MapperInitializer));
 
 //register serilog logger to the services---hand written
 builder.Host.UseSerilog((ctx, lc) => lc
