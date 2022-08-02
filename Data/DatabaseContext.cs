@@ -17,8 +17,8 @@ namespace HotelListing_API.Data
 
         //overridden method for seeding data into the database
         public virtual void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Country>().HasData(
+        { 
+             modelBuilder.Entity<Country>().HasData(
                new Country
                {
                    Id = 1,
@@ -44,7 +44,7 @@ namespace HotelListing_API.Data
                {
                    Id = 1,
                    HotelName = "FITT",
-                   HotelAddress =" Lagos",
+                   HotelAddress = " Lagos",
                    HotelRating = 2.0,
                    CountryId = 1,
                },
@@ -68,6 +68,6 @@ namespace HotelListing_API.Data
 
         }
 
-       
+
     }
 }
