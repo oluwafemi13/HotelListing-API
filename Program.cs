@@ -36,7 +36,30 @@ builder.Services.AddAutoMapper(typeof(MapperInitializer));
 builder.Host.UseSerilog((ctx, lc) => lc
     .WriteTo.Console().WriteTo.Seq("http://localhost:5341/"));
 
+
+
 var app = builder.Build();
+
+//register the database initializer or seeder by calling the databasecontext again
+/*var scope = app.Services.CreateScope();
+var context= scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+
+try
+{
+    context.Database.Migrate();
+    //using the initialize method to add the data in the databaseinitializer to the application 
+    DatabaseInitializer.Initialize(context);
+
+}
+catch(Exception ex)
+{
+    Serilog.Log.Error(ex, "Problem Migrating Data");
+}
+finally
+{
+    scope.Dispose();
+}*/
+
 
 
 
@@ -55,6 +78,7 @@ app.UseCors("MyCorsPolicy");
 app.UseAuthorization();
 
 app.MapControllers();
+
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.File(path: "C:\\Users\\Decagon\\Desktop\\MyFolder\\Log.txt", 
