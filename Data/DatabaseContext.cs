@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace HotelListing_API.Data
 {
-    public class DatabaseContext :IdentityDbContext
+    public class DatabaseContext :IdentityDbContext<ApiUser>
     {
         public DatabaseContext(DbContextOptions options)
             :base(options)
@@ -66,7 +66,7 @@ namespace HotelListing_API.Data
                    HotelRating = 4.5,
                    CountryId = 1,
                }
-                );
+               );
 
         }
 

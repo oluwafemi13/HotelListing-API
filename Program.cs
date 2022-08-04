@@ -2,6 +2,7 @@ using HotelListing_API.Data;
 using HotelListing_API.IRepository;
 using HotelListing_API.Mappings;
 using HotelListing_API.Repository;
+using HotelListing_API.ServicesExtension;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System.Configuration;
@@ -37,6 +38,10 @@ builder.Host.UseSerilog((ctx, lc) => lc
     .WriteTo.Console().WriteTo.Seq("http://localhost:5341/"));
 
 
+//This is to register the identity configuration service from the
+//ServiceExtension folder into the program class
+builder.Services.AddAuthentication();
+builder.Services.ConfigureIdentity();
 
 var app = builder.Build();
 
