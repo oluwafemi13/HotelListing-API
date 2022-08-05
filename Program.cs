@@ -1,6 +1,6 @@
 using HotelListing_API.Data;
 using HotelListing_API.IRepository;
-using HotelListing_API.Mappings;
+using HotelListing_API.ConfigurationsAndMappings;
 using HotelListing_API.Repository;
 using HotelListing_API.ServicesExtension;
 using Microsoft.EntityFrameworkCore;
@@ -44,28 +44,6 @@ builder.Services.AddAuthentication();
 builder.Services.ConfigureIdentity();
 
 var app = builder.Build();
-
-//register the database initializer or seeder by calling the databasecontext again
-/*var scope = app.Services.CreateScope();
-var context= scope.ServiceProvider.GetRequiredService<DatabaseContext>();
-
-try
-{
-    context.Database.Migrate();
-    //using the initialize method to add the data in the databaseinitializer to the application 
-    DatabaseInitializer.Initialize(context);
-
-}
-catch(Exception ex)
-{
-    Serilog.Log.Error(ex, "Problem Migrating Data");
-}
-finally
-{
-    scope.Dispose();
-}*/
-
-
 
 
 // Configure the HTTP request pipeline.

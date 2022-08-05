@@ -2,7 +2,7 @@
 using HotelListing_API.Data;
 using HotelListing_API.Models;
 
-namespace HotelListing_API.Mappings
+namespace HotelListing_API.ConfigurationsAndMappings
 {
     public class MapperInitializer:Profile
     {
