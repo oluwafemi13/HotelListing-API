@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HotelListing_API.Data;
 using HotelListing_API.Models;
+using HotelListing_API.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -13,11 +14,13 @@ namespace HotelListing_API.Controllers
        // private readonly SignInManager<ApiUser> _SignInManager;
         private readonly ILogger<AccountController> _logger;  
         private readonly IMapper _mapper;
+        private readonly IAuthenticationManager _AuthenticationManager;
 
 
         public AccountController(UserManager<ApiUser> userManager, 
             //SignInManager<ApiUser> signInManager,
-                                 ILogger<AccountController> logger, IMapper mapper)
+                                 ILogger<AccountController> logger, IMapper mapper, 
+                                 IAuthenticationManager AuthenticationManager)
         {
 
             _userManager = userManager;
@@ -25,6 +28,7 @@ namespace HotelListing_API.Controllers
             //_SignInManager = signInManager;
             _logger = logger;
             _mapper = mapper;
+            _AuthenticationManager = AuthenticationManager;
         }
 
 
@@ -68,42 +72,47 @@ namespace HotelListing_API.Controllers
         }
         #endregion
 
-        //#region registration Endpoint
-        ////Registration Endpoint
-        //[HttpPost]
-        //[Route("Login")]
-        //public async Task<IActionResult> Login([FromBody] UserLoginDTO userLoginDTO)
-        //{
-        //    _logger.LogInformation($"Login Attempt for {userLoginDTO.Email}");
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            //in user login, we are not mapping instead we are using the signinmanager to 
-        //            //validate details
-        //            /*var user = _mapper.Map<ApiUser>(userLoginDTO);
-        //            var result = await _userManager.CreateAsync(user);*/
-        //            var result =await _SignInManager.PasswordSignInAsync(userLoginDTO.Email, userLoginDTO.Password, false, false);
 
-        //            if (!result.Succeeded)
-        //            {
-        //                return Unauthorized(userLoginDTO);
-        //            }
-        //            return Accepted();
-        //        }
-        //        catch (Exception ex)
-        //        {
 
-        //            _logger.LogError(ex, $"Something Went Wrong in the {nameof(Login)}");
-        //            return Problem($"Something Went Wrong in the{nameof(Login)}", statusCode: 500);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-        //}
-        //#endregion
+
+
+
+
+        #region login Endpoint
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login([FromBody] UserLoginDTO userLoginDTO)
+        {
+            _logger.LogInformation($"Login Attempt for {userLoginDTO.Email}");
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    //in user login, we are not mapping instead we are using the signinmanager to 
+                    //validate details
+                    /*var user = _mapper.Map<ApiUser>(userLoginDTO);
+                    var result = await _userManager.CreateAsync(user);*/
+                    //var result =await _SignInManager.PasswordSignInAsync(userLoginDTO.Email, userLoginDTO.Password, false, false);
+
+                    if (!await _AuthenticationManager.ValidateUser(userLoginDTO))
+                    {
+                        return Unauthorized();
+                    }
+                    return Accepted(new {Token = await _AuthenticationManager.CreateToken()});
+                }
+                catch (Exception ex)
+                {
+
+                    _logger.LogError(ex, $"Something Went Wrong in the {nameof(Login)}");
+                    return Problem($"Something Went Wrong in the{nameof(Login)}", statusCode: 500);
+                }
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
+        #endregion
 
     }
 

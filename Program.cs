@@ -6,8 +6,7 @@ using HotelListing_API.ServicesExtension;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System.Configuration;
-
-
+using HotelListing_API.Services;
 
 var builder =WebApplication.CreateBuilder(args);
 
@@ -19,6 +18,7 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 
 //this must be registered for a request in the controller to function
 builder.Services.AddTransient<IWorkDone, WorkDone>();
+builder.Services.AddScoped<IAuthenticationManager, AuthenticationManager>();
 
 builder.Services.AddControllers().AddNewtonsoftJson(option =>
         option.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
@@ -42,6 +42,7 @@ builder.Host.UseSerilog((ctx, lc) => lc
 //ServiceExtension folder into the program class
 builder.Services.AddAuthentication();
 builder.Services.ConfigureIdentity();
+builder.Services.ConfigureJWT(builder.Configuration);
 
 var app = builder.Build();
 
@@ -49,7 +50,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    
+    app.UseDeveloperExceptionPage();
     ////
 }
 app.UseSwagger();
@@ -58,6 +59,7 @@ app.UseSwaggerUI();
 app.UseHttpsRedirection();
 
 app.UseCors("MyCorsPolicy");
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
