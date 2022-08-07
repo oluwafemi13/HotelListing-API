@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using HotelListing_API.Data;
 using HotelListing_API.IRepository;
 using HotelListing_API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -48,7 +50,7 @@ namespace HotelListing_API.Controllers
 
         //this is a get by id method
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int}", Name ="GetCountry")]
         public async Task<IActionResult> GetCountry(int id)
         {
             try
@@ -64,6 +66,39 @@ namespace HotelListing_API.Controllers
                 //statuscode 500 means internal server error
                 return StatusCode(500, "Server Error, Try Again Later");
             }
+        }
+
+
+        [Authorize(Roles = "Administrator")]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateCountry([FromBody] CreateCountryDTO createCountrydto)
+        {
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var country = _Mapper.Map<Country>(createCountrydto);
+                    await _WorkDone.countryRepository.Insert(country);
+                    await _WorkDone.Save();
+
+                    return CreatedAtRoute("GetCountry", new { id = country.Id }, country);
+                }
+                catch (Exception ex)
+                {
+                    _Logger.LogError(ex, $"Something Went wrong in the {nameof(CreateCountry)}");
+                    return StatusCode(500, "Internal Server Error. Please Try Again Later.");
+                }
+            }
+            else
+            {
+                _Logger.LogError($" Invalid Attempt in {nameof(CreateCountry)}");
+                return BadRequest(ModelState); ;
+            }
+
         }
 
     }
