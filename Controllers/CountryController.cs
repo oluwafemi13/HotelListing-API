@@ -96,7 +96,7 @@ namespace HotelListing_API.Controllers
             else
             {
                 _Logger.LogError($" Invalid Attempt in {nameof(CreateCountry)}");
-                return BadRequest(ModelState); ;
+                return BadRequest(ModelState);
             }
 
         }
